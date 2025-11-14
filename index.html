@@ -74,6 +74,62 @@
             gap: 0.5rem;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: help;
+        }
+
+        .sync-status.online {
+            background: rgba(76,175,80,0.2);
+        }
+
+        .sync-status.syncing {
+            background: rgba(255,179,0,0.2);
+        }
+
+        .sync-icon {
+            font-size: 1rem;
+        }
+
+        .sync-text {
+            color: white;
+            font-weight: 500;
+        }
+
+        .auth-button {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .auth-button:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        .auth-button.authenticated {
+            background: rgba(76,175,80,0.3);
+            border-color: #4CAF50;
+        }
+
         .install-button {
             background: rgba(255,255,255,0.2);
             border: 2px solid white;
@@ -89,6 +145,26 @@
         .install-button:hover {
             background: white;
             color: var(--primary);
+        }
+
+        /* Mobile responsive header */
+        @media (max-width: 768px) {
+            .header-actions {
+                gap: 0.5rem;
+            }
+
+            .sync-text {
+                display: none;
+            }
+
+            .auth-button, .install-button {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
         }
 
         /* Navigation */
@@ -735,9 +811,20 @@
                 <span>🧠</span>
                 <span>NeuroThrive Daily</span>
             </div>
-            <button class="install-button" id="installButton">
-                Install App
-            </button>
+            <div class="header-actions">
+                <!-- Sync Status Indicator -->
+                <div id="syncStatus" class="sync-status" title="Sync status">
+                    <span class="sync-icon">☁️</span>
+                    <span class="sync-text">Offline</span>
+                </div>
+                <!-- Login/Logout Button -->
+                <button class="auth-button" id="authButton">
+                    Login to Salesforce
+                </button>
+                <button class="install-button" id="installButton">
+                    Install App
+                </button>
+            </div>
         </div>
     </header>
 
@@ -1725,8 +1812,107 @@ Or just write naturally..." oninput="parseWins()"></textarea>
         });
     </script>
 
+    <!-- Salesforce OAuth Configuration (must load before salesforce-api.js) -->
+    <script src="js/config.js"></script>
+
     <!-- Salesforce Sync Modules -->
     <script src="js/salesforce-api.js"></script>
     <script src="js/sync-manager.js"></script>
+
+    <!-- Authentication UI Handler -->
+    <script>
+        // Initialize authentication UI
+        function updateAuthUI() {
+            const authButton = document.getElementById('authButton');
+            const syncStatus = document.getElementById('syncStatus');
+            const syncIcon = syncStatus.querySelector('.sync-icon');
+            const syncText = syncStatus.querySelector('.sync-text');
+
+            if (window.salesforceAPI && window.salesforceAPI.isAuthenticated()) {
+                // User is logged in
+                authButton.textContent = 'Logout';
+                authButton.classList.add('authenticated');
+                authButton.onclick = async () => {
+                    if (confirm('Are you sure you want to logout? Unsynced changes will remain queued.')) {
+                        await window.salesforceAPI.logout();
+                        updateAuthUI();
+                        alert('Logged out successfully');
+                    }
+                };
+
+                // Update sync status
+                if (navigator.onLine) {
+                    syncIcon.textContent = '✓';
+                    syncText.textContent = 'Online';
+                    syncStatus.classList.add('online');
+                    syncStatus.classList.remove('syncing');
+                } else {
+                    syncIcon.textContent = '⚠';
+                    syncText.textContent = 'Offline';
+                    syncStatus.classList.remove('online', 'syncing');
+                }
+            } else {
+                // User is not logged in
+                authButton.textContent = 'Login to Salesforce';
+                authButton.classList.remove('authenticated');
+                authButton.onclick = () => {
+                    if (window.salesforceAPI) {
+                        window.salesforceAPI.login();
+                    } else {
+                        alert('OAuth configuration not loaded. Please check js/config.js');
+                    }
+                };
+
+                // Update sync status
+                syncIcon.textContent = '☁️';
+                syncText.textContent = 'Not Synced';
+                syncStatus.classList.remove('online', 'syncing');
+            }
+        }
+
+        // Update UI on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAuthUI();
+
+            // Update UI when online/offline status changes
+            window.addEventListener('online', updateAuthUI);
+            window.addEventListener('offline', updateAuthUI);
+
+            // Show sync status when syncing
+            if (window.syncManager) {
+                const originalSyncAll = window.syncManager.syncAll.bind(window.syncManager);
+                window.syncManager.syncAll = async function() {
+                    const syncStatus = document.getElementById('syncStatus');
+                    const syncIcon = syncStatus.querySelector('.sync-icon');
+                    const syncText = syncStatus.querySelector('.sync-text');
+
+                    // Show syncing status
+                    syncIcon.textContent = '↻';
+                    syncText.textContent = 'Syncing...';
+                    syncStatus.classList.add('syncing');
+                    syncStatus.classList.remove('online');
+
+                    try {
+                        const result = await originalSyncAll();
+
+                        // Show success
+                        syncIcon.textContent = '✓';
+                        syncText.textContent = 'Synced';
+                        syncStatus.classList.add('online');
+                        syncStatus.classList.remove('syncing');
+
+                        return result;
+                    } catch (e) {
+                        // Show error
+                        syncIcon.textContent = '✗';
+                        syncText.textContent = 'Sync Failed';
+                        syncStatus.classList.remove('online', 'syncing');
+
+                        throw e;
+                    }
+                };
+            }
+        });
+    </script>
 </body>
 </html>
