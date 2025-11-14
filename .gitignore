@@ -1,17 +1,28 @@
-# Salesforce OAuth Credentials (NEVER COMMIT!)
-js/config.js
-.env
+# Test Configuration
+**/.env
+**/config.js
 
-# Node modules (if added later)
+# Dependencies
 node_modules/
 package-lock.json
 
-# OS files
+# Test Output
+coverage/
+test-results/
+playwright-report/
+lighthouse-report.html
+
+# Build Output
+dist/
+build/
+*.tmp
+
+# OS Files
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# IDE files
+# IDE
 .vscode/
 .idea/
 *.swp
@@ -24,18 +35,13 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Build outputs
-dist/
-build/
-*.tmp
-
-# Service worker cache
+# Service Worker Cache
 sw-cache/
 
-# Test coverage
-coverage/
-.nyc_output/
-
-# Temporary files
+# Temporary Files
 *.bak
 *.cache
+
+# Python
+__pycache__/
+*.py[cod]
