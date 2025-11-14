@@ -1,0 +1,41 @@
+# Salesforce OAuth Credentials (NEVER COMMIT!)
+js/config.js
+.env
+
+# Node modules (if added later)
+node_modules/
+package-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+*.tmp
+
+# Service worker cache
+sw-cache/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+*.bak
+*.cache
