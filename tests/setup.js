@@ -58,12 +58,21 @@ global.indexedDB = indexedDBMock;
 
 // Reset all mocks before each test
 beforeEach(() => {
+  // Reset mock call history but keep implementations
   jest.clearAllMocks();
-  localStorage.getItem.mockReturnValue(null);
-  sessionStorage.getItem.mockReturnValue(null);
-  fetch.mockResolvedValue({
-    ok: true,
-    json: async () => ({}),
-    text: async () => '',
-  });
+
+  // Re-setup default return values
+  if (localStorage.getItem.mockReturnValue) {
+    localStorage.getItem.mockReturnValue(null);
+  }
+  if (sessionStorage.getItem.mockReturnValue) {
+    sessionStorage.getItem.mockReturnValue(null);
+  }
+  if (fetch.mockResolvedValue) {
+    fetch.mockResolvedValue({
+      ok: true,
+      json: async () => ({}),
+      text: async () => '',
+    });
+  }
 });
