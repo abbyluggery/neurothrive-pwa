@@ -18,7 +18,14 @@
     
     <!-- Icon using emoji -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧠</text></svg>">
-    
+
+    <!-- External Stylesheets - Phase 2 Enhancements -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+
+    <!-- Chart.js for Data Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -804,8 +811,11 @@
     </style>
 </head>
 <body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Header -->
-    <header class="header">
+    <header class="header" role="banner">
         <div class="header-content">
             <div class="logo">
                 <span>🧠</span>
@@ -817,11 +827,15 @@
                     <span class="sync-icon">☁️</span>
                     <span class="sync-text">Offline</span>
                 </div>
+                <!-- Dark Mode Toggle -->
+                <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    🌙
+                </button>
                 <!-- Login/Logout Button -->
-                <button class="auth-button" id="authButton">
+                <button class="auth-button" id="authButton" aria-label="Login to Salesforce">
                     Login to Salesforce
                 </button>
-                <button class="install-button" id="installButton">
+                <button class="install-button" id="installButton" aria-label="Install app">
                     Install App
                 </button>
             </div>
@@ -829,18 +843,18 @@
     </header>
 
     <!-- Navigation Tabs -->
-    <nav class="nav-tabs">
+    <nav class="nav-tabs" role="navigation" aria-label="Main navigation">
         <div class="nav-tabs-inner">
-            <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
-            <button class="nav-tab" data-tab="journal">Journal</button>
-            <button class="nav-tab" data-tab="routine">Routine</button>
-            <button class="nav-tab" data-tab="therapy">Therapy</button>
-            <button class="nav-tab" data-tab="jobsearch">Job Search</button>
+            <button class="nav-tab active" data-tab="dashboard" role="tab" aria-selected="true">Dashboard</button>
+            <button class="nav-tab" data-tab="journal" role="tab" aria-selected="false">Journal</button>
+            <button class="nav-tab" data-tab="routine" role="tab" aria-selected="false">Routine</button>
+            <button class="nav-tab" data-tab="therapy" role="tab" aria-selected="false">Therapy</button>
+            <button class="nav-tab" data-tab="jobsearch" role="tab" aria-selected="false">Job Search</button>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="content">
+    <main id="main-content" class="content" role="main">
         <!-- Dashboard Tab -->
         <div id="dashboard" class="tab-content active">
             <!-- Today's Energy -->
@@ -1818,6 +1832,10 @@ Or just write naturally..." oninput="parseWins()"></textarea>
     <!-- Salesforce Sync Modules -->
     <script src="js/salesforce-api.js"></script>
     <script src="js/sync-manager.js"></script>
+
+    <!-- Phase 2 Enhancements -->
+    <script src="js/dark-mode.js"></script>
+    <script src="js/imposter-detection.js"></script>
 
     <!-- Authentication UI Handler -->
     <script>
