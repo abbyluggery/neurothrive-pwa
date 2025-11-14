@@ -3,21 +3,12 @@
  * Tests pattern matching, severity calculation, and suggestions
  */
 
-const fs = require('fs');
-const path = require('path');
-const detectorCode = fs.readFileSync(
-  path.join(__dirname, '../js/imposter-detection.js'),
-  'utf-8'
-);
+const { ImposterSyndromeDetector } = require('../js/imposter-detection.js');
 
 describe('ImposterSyndromeDetector', () => {
-  let ImposterSyndromeDetector;
   let detector;
 
   beforeEach(() => {
-    // Execute the code to get the class
-    eval(detectorCode.replace('window.imposterDetector = imposterDetector;', ''));
-    ImposterSyndromeDetector = global.ImposterSyndromeDetector;
     detector = new ImposterSyndromeDetector();
   });
 

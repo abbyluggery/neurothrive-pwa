@@ -196,27 +196,35 @@ class DarkModeManager {
     }
 }
 
-// Create singleton instance
-const darkModeManager = new DarkModeManager();
+// Only initialize in browser environment (not in test/Node.js)
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    // Create singleton instance
+    const darkModeManager = new DarkModeManager();
 
-// Make available globally
-window.darkModeManager = darkModeManager;
+    // Make available globally
+    window.darkModeManager = darkModeManager;
 
-// Initialize toggle button when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initDarkModeToggle);
-} else {
-    initDarkModeToggle();
+    // Initialize toggle button when DOM is ready
+    function initDarkModeToggle() {
+        const toggleButton = document.getElementById('darkModeToggle');
+        if (toggleButton) {
+            toggleButton.addEventListener('click', () => {
+                darkModeManager.toggle();
+            });
+
+            // Set initial state
+            darkModeManager.updateToggleButton(darkModeManager.getCurrentTheme());
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDarkModeToggle);
+    } else {
+        initDarkModeToggle();
+    }
 }
 
-function initDarkModeToggle() {
-    const toggleButton = document.getElementById('darkModeToggle');
-    if (toggleButton) {
-        toggleButton.addEventListener('click', () => {
-            darkModeManager.toggle();
-        });
-
-        // Set initial state
-        darkModeManager.updateToggleButton(darkModeManager.getCurrentTheme());
-    }
+// Export for testing (CommonJS for Node.js/Jest)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { DarkModeManager };
 }

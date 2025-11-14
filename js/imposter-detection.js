@@ -29,15 +29,16 @@ class ImposterSyndromeDetector {
     initializePatterns() {
         return [
             // Strong indicators (weight: 3)
-            { pattern: /\bi'?m\s+(a\s+)?(fraud|fake|phony|imposter|impostor)/i, weight: 3, category: 'identity' },
+            { pattern: /\bi'?m\s+.*?(fraud|fake|phony|imposter|impostor)/i, weight: 3, category: 'identity' },
             { pattern: /\bi\s+don'?t\s+(really\s+)?belong\s+here/i, weight: 3, category: 'belonging' },
-            { pattern: /everyone\s+will\s+(find\s+out|discover|realize)\s+i'?m/i, weight: 3, category: 'fear' },
-            { pattern: /\bthey'?ll\s+(find\s+out|discover|realize)\s+i'?m/i, weight: 3, category: 'fear' },
+            { pattern: /everyone\s+will\s+(find\s+out|discover|realize)/i, weight: 3, category: 'fear' },
+            { pattern: /\bthey'?ll\s+(find\s+out|discover|realize)/i, weight: 3, category: 'fear' },
             { pattern: /\bi'?m\s+not\s+(good|smart|talented|skilled)\s+enough/i, weight: 3, category: 'competence' },
             { pattern: /\bi\s+fooled\s+(them|everyone|people)/i, weight: 3, category: 'deception' },
 
             // Medium indicators (weight: 2)
-            { pattern: /\bjust\s+(got\s+)?(lucky|fortunate)/i, weight: 2, category: 'luck' },
+            { pattern: /\b(just|only)\s+(got\s+)?(lucky|fortunate)/i, weight: 2, category: 'luck' },
+            { pattern: /\bi\s+was\s+(just\s+)?(lucky|fortunate)/i, weight: 2, category: 'luck' },
             { pattern: /\bit\s+was\s+(just|only)\s+luck/i, weight: 2, category: 'luck' },
             { pattern: /anyone\s+could\s+(have\s+)?done\s+(it|this|that)/i, weight: 2, category: 'minimizing' },
             { pattern: /\bwing(ing)?\s+it/i, weight: 2, category: 'competence' },
@@ -248,10 +249,18 @@ class ImposterSyndromeDetector {
     }
 }
 
-// Create singleton instance
-const imposterDetector = new ImposterSyndromeDetector();
+// Only initialize in browser environment (not in test/Node.js)
+if (typeof window !== 'undefined') {
+    // Create singleton instance
+    const imposterDetector = new ImposterSyndromeDetector();
 
-// Make available globally
-window.imposterDetector = imposterDetector;
+    // Make available globally
+    window.imposterDetector = imposterDetector;
 
-console.log('✅ Enhanced imposter syndrome detector loaded');
+    console.log('✅ Enhanced imposter syndrome detector loaded');
+}
+
+// Export for testing (CommonJS for Node.js/Jest)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { ImposterSyndromeDetector };
+}

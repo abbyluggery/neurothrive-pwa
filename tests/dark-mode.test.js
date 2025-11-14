@@ -3,37 +3,41 @@
  * Tests theme detection, toggling, and persistence
  */
 
-// Mock DOM
-document.documentElement.setAttribute = jest.fn();
-document.documentElement.getAttribute = jest.fn();
-document.querySelector = jest.fn();
-document.createElement = jest.fn(() => ({
-  setAttribute: jest.fn(),
-  appendChild: jest.fn(),
-}));
-document.body.appendChild = jest.fn();
-document.body.removeChild = jest.fn();
-
 // Load the module
-const fs = require('fs');
-const path = require('path');
-const darkModeCode = fs.readFileSync(
-  path.join(__dirname, '../js/dark-mode.js'),
-  'utf-8'
-);
+const { DarkModeManager } = require('../js/dark-mode.js');
 
 describe('DarkModeManager', () => {
-  let DarkModeManager;
   let manager;
 
-  beforeEach(() => {
-    // Reset DOM mocks
-    jest.clearAllMocks();
-    document.documentElement.getAttribute.mockReturnValue('light');
+  beforeAll(() => {
+    // Mock DOM methods
+    document.documentElement.setAttribute = jest.fn();
+    document.documentElement.getAttribute = jest.fn();
+    document.querySelector = jest.fn();
+    document.createElement = jest.fn(() => ({
+      setAttribute: jest.fn(),
+      appendChild: jest.fn(),
+    }));
+    document.body.appendChild = jest.fn();
+    document.body.removeChild = jest.fn();
+    document.getElementById = jest.fn();
+    window.dispatchEvent = jest.fn();
+  });
 
-    // Execute the code to get the class
-    eval(darkModeCode.replace('window.darkModeManager = darkModeManager;', ''));
-    DarkModeManager = global.DarkModeManager;
+  beforeEach(() => {
+    // Reset all mocks
+    if (localStorage.getItem.mockClear) {
+      localStorage.getItem.mockClear();
+      localStorage.setItem.mockClear();
+      localStorage.removeItem.mockClear();
+    }
+    localStorage.getItem.mockReturnValue(null);
+
+    // Setup DOM mocks
+    document.documentElement.getAttribute.mockReturnValue('light');
+    document.getElementById.mockReturnValue(null);
+
+    // Create manager instance
     manager = new DarkModeManager();
   });
 

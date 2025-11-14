@@ -3,23 +3,21 @@
  * Configures JSDOM environment for testing browser-based JavaScript
  */
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+// Mock localStorage with proper Jest mocks
+global.localStorage = {
+  getItem: jest.fn(() => null),
+  setItem: jest.fn(() => {}),
+  removeItem: jest.fn(() => {}),
+  clear: jest.fn(() => {}),
 };
-global.localStorage = localStorageMock;
 
-// Mock sessionStorage
-const sessionStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+// Mock sessionStorage with proper Jest mocks
+global.sessionStorage = {
+  getItem: jest.fn(() => null),
+  setItem: jest.fn(() => {}),
+  removeItem: jest.fn(() => {}),
+  clear: jest.fn(() => {}),
 };
-global.sessionStorage = sessionStorageMock;
 
 // Mock fetch
 global.fetch = jest.fn();
@@ -56,23 +54,4 @@ const indexedDBMock = {
 };
 global.indexedDB = indexedDBMock;
 
-// Reset all mocks before each test
-beforeEach(() => {
-  // Reset mock call history but keep implementations
-  jest.clearAllMocks();
-
-  // Re-setup default return values
-  if (localStorage.getItem.mockReturnValue) {
-    localStorage.getItem.mockReturnValue(null);
-  }
-  if (sessionStorage.getItem.mockReturnValue) {
-    sessionStorage.getItem.mockReturnValue(null);
-  }
-  if (fetch.mockResolvedValue) {
-    fetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({}),
-      text: async () => '',
-    });
-  }
-});
+// Note: Individual test files should reset mocks in their own beforeEach blocks as needed
