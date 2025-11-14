@@ -8,15 +8,31 @@
 
 class SalesforceAPI {
     constructor() {
-        // Configuration (would come from environment variables in production)
+        // Load configuration from window.SALESFORCE_CONFIG (set in config.js)
+        if (!window.SALESFORCE_CONFIG) {
+            console.error('❌ SALESFORCE_CONFIG not found! Please create js/config.js from js/config.template.js');
+            throw new Error('Salesforce configuration missing. See js/config.template.js for setup instructions.');
+        }
+
         this.config = {
-            clientId: '', // Set from OAuth Connected App
-            clientSecret: '', // Set from OAuth Connected App (use only in secure backend)
-            instanceUrl: 'https://abbyluggery179.my.salesforce.com',
-            loginUrl: 'https://login.salesforce.com',
-            redirectUri: window.location.origin + '/oauth/callback',
-            apiVersion: 'v65.0'
+            clientId: window.SALESFORCE_CONFIG.clientId,
+            clientSecret: window.SALESFORCE_CONFIG.clientSecret,
+            instanceUrl: window.SALESFORCE_CONFIG.instanceUrl,
+            loginUrl: window.SALESFORCE_CONFIG.loginUrl,
+            redirectUri: window.SALESFORCE_CONFIG.redirectUri,
+            apiVersion: window.SALESFORCE_CONFIG.apiVersion
         };
+
+        // Validate configuration
+        if (!this.config.clientId || this.config.clientId.includes('YOUR_')) {
+            console.error('❌ Invalid clientId in config.js');
+            throw new Error('Please update js/config.js with your actual OAuth credentials');
+        }
+
+        console.log('✅ Salesforce API initialized with config:', {
+            instanceUrl: this.config.instanceUrl,
+            redirectUri: this.config.redirectUri
+        });
 
         this.tokens = this.loadTokens();
         this.authInProgress = false;
