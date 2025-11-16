@@ -4,12 +4,21 @@
  */
 
 // Mock localStorage with proper Jest mocks
-global.localStorage = {
+const localStorageMock = {
   getItem: jest.fn(() => null),
   setItem: jest.fn(() => {}),
   removeItem: jest.fn(() => {}),
   clear: jest.fn(() => {}),
 };
+
+global.localStorage = localStorageMock;
+
+// Ensure window.localStorage (JSDOM) uses the same reference
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+  configurable: true,
+});
 
 // Mock sessionStorage with proper Jest mocks
 global.sessionStorage = {

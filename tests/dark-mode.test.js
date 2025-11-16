@@ -25,16 +25,27 @@ describe('DarkModeManager', () => {
   });
 
   beforeEach(() => {
-    // Reset all mocks
-    if (localStorage.getItem.mockClear) {
-      localStorage.getItem.mockClear();
-      localStorage.setItem.mockClear();
-      localStorage.removeItem.mockClear();
-    }
-    localStorage.getItem.mockReturnValue(null);
+    // Create fresh localStorage mock object
+    const localStorageMock = {
+      getItem: jest.fn(() => null),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+      clear: jest.fn(),
+    };
+
+    global.localStorage = localStorageMock;
+
+    // Ensure window.localStorage uses the same reference
+    Object.defineProperty(window, 'localStorage', {
+      value: localStorageMock,
+      writable: true,
+      configurable: true,
+    });
 
     // Setup DOM mocks
+    document.documentElement.getAttribute.mockClear();
     document.documentElement.getAttribute.mockReturnValue('light');
+    document.getElementById.mockClear();
     document.getElementById.mockReturnValue(null);
 
     // Create manager instance
@@ -58,7 +69,21 @@ describe('DarkModeManager', () => {
     });
 
     test('should load saved theme from localStorage', () => {
-      localStorage.getItem.mockReturnValue('dark');
+      // Create a new localStorage mock with dark theme saved
+      const darkThemeMock = {
+        getItem: jest.fn(() => 'dark'),
+        setItem: jest.fn(),
+        removeItem: jest.fn(),
+        clear: jest.fn(),
+      };
+
+      global.localStorage = darkThemeMock;
+      Object.defineProperty(window, 'localStorage', {
+        value: darkThemeMock,
+        writable: true,
+        configurable: true,
+      });
+
       const newManager = new DarkModeManager();
       expect(newManager.getSavedTheme()).toBe('dark');
     });
@@ -83,7 +108,7 @@ describe('DarkModeManager', () => {
 
     test('should save theme to localStorage when save=true', () => {
       manager.setTheme('dark', true);
-      expect(localStorage.setItem).toHaveBeenCalledWith(
+      expect(global.localStorage.setItem).toHaveBeenCalledWith(
         'neurothrive-theme',
         'dark'
       );
@@ -91,7 +116,7 @@ describe('DarkModeManager', () => {
 
     test('should not save theme when save=false', () => {
       manager.setTheme('dark', false);
-      expect(localStorage.setItem).not.toHaveBeenCalled();
+      expect(global.localStorage.setItem).not.toHaveBeenCalled();
     });
 
     test('should default to light theme for invalid values', () => {
@@ -125,7 +150,7 @@ describe('DarkModeManager', () => {
     test('should save preference after toggle', () => {
       document.documentElement.getAttribute.mockReturnValue('light');
       manager.toggle();
-      expect(localStorage.setItem).toHaveBeenCalled();
+      expect(global.localStorage.setItem).toHaveBeenCalled();
     });
   });
 
@@ -154,7 +179,7 @@ describe('DarkModeManager', () => {
   describe('Clear Preference', () => {
     test('should remove saved preference', () => {
       manager.clearPreference();
-      expect(localStorage.removeItem).toHaveBeenCalledWith('neurothrive-theme');
+      expect(global.localStorage.removeItem).toHaveBeenCalledWith('neurothrive-theme');
     });
 
     test('should revert to system theme after clearing', () => {
