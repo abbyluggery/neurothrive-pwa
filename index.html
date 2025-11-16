@@ -896,6 +896,18 @@
                 </div>
             </div>
 
+            <!-- Mood & Energy Trends -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span>📊</span>
+                    Mood & Energy Trends
+                </h2>
+                <p class="card-subtitle">Last 7 days</p>
+                <div style="position: relative; height: 250px; margin-top: 1rem;">
+                    <canvas id="moodTrendChart"></canvas>
+                </div>
+            </div>
+
             <!-- Manifestation Progress -->
             <div class="card">
                 <h2 class="card-title">
@@ -1373,6 +1385,11 @@ Or just write naturally..." oninput="parseWins()"></textarea>
                 moods[today] = moods[today] || {};
                 moods[today][timeOfDay] = { mood: parseInt(mood), energy: parseInt(energy) };
                 localStorage.setItem('moods', JSON.stringify(moods));
+
+                // Refresh charts with new data
+                if (window.dataViz) {
+                    window.dataViz.refreshCharts();
+                }
             }
         }
 
@@ -1836,6 +1853,7 @@ Or just write naturally..." oninput="parseWins()"></textarea>
     <!-- Phase 2 Enhancements -->
     <script src="js/dark-mode.js"></script>
     <script src="js/imposter-detection.js"></script>
+    <script src="js/data-visualization.js"></script>
 
     <!-- Authentication UI Handler -->
     <script>
@@ -1891,6 +1909,11 @@ Or just write naturally..." oninput="parseWins()"></textarea>
         // Update UI on page load
         document.addEventListener('DOMContentLoaded', () => {
             updateAuthUI();
+
+            // Initialize data visualizations
+            if (window.dataViz) {
+                window.dataViz.initializeAll();
+            }
 
             // Update UI when online/offline status changes
             window.addEventListener('online', updateAuthUI);
