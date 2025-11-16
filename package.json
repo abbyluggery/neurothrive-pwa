@@ -1,0 +1,69 @@
+{
+  "name": "neurothrive-pwa",
+  "version": "1.0.0",
+  "description": "NeuroThrive PWA - Neurodivergent-Friendly Wellness Tracker",
+  "main": "index.html",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:all": "npm run test && npm run test:e2e",
+    "dev": "python -m http.server 8080",
+    "build": "node scripts/build.js",
+    "deploy": "npm run build && gh-pages -d dist",
+    "lighthouse": "lighthouse http://localhost:8080 --output html --output-path ./lighthouse-report.html"
+  },
+  "keywords": [
+    "pwa",
+    "wellness",
+    "neurodivergent",
+    "adhd",
+    "mental-health",
+    "salesforce"
+  ],
+  "author": "Abby Luggery",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/jest": "^29.5.11",
+    "gh-pages": "^6.1.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "lighthouse": "^11.4.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "js/**/*.js",
+      "!js/config.js",
+      "!js/config.template.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    },
+    "testMatch": [
+      "**/tests/**/*.test.js",
+      "**/__tests__/**/*.js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abbyluggery/neurothrive-pwa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abbyluggery/neurothrive-pwa/issues"
+  },
+  "homepage": "https://abbyluggery.github.io/neurothrive-pwa"
+}

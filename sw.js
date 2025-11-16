@@ -1,9 +1,21 @@
 // Service Worker for NeuroThrive Daily PWA
-const CACHE_NAME = 'neurothrive-v2.0';
+const CACHE_VERSION = 'v3.1';
+const CACHE_NAME = `neurothrive-${CACHE_VERSION}`;
+
+// Core files to cache immediately
 const urlsToCache = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './css/styles.css',
+  './css/components.css',
+  './js/config.template.js',
+  './js/salesforce-api.js',
+  './js/sync-manager.js',
+  './js/dark-mode.js',
+  './js/imposter-detection.js',
+  './js/data-visualization.js',
+  './oauth/callback'
 ];
 
 // Install event - cache resources
