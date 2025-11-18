@@ -1,5 +1,5 @@
-// Service Worker for NeuroThrive Daily PWA
-const CACHE_NAME = 'neurothrive-v2.0';
+// Service Worker for DivergentThrive Daily PWA
+const CACHE_NAME = 'divergentthrive-v2.0';
 const urlsToCache = [
   './',
   './index.html',
@@ -104,7 +104,7 @@ self.addEventListener('push', event => {
   };
   
   event.waitUntil(
-    self.registration.showNotification('NeuroThrive Daily', options)
+    self.registration.showNotification('DivergentThrive Daily', options)
   );
 });
 

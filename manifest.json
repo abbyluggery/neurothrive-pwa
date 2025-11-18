@@ -1,6 +1,6 @@
 {
-  "name": "NeuroThrive Daily",
-  "short_name": "NeuroThrive",
+  "name": "DivergentThrive Daily",
+  "short_name": "DivergentThrive",
   "description": "Your neurodivergent support companion - track moods, manage routines, counter imposter syndrome, and thrive daily",
   "start_url": "./index.html",
   "scope": "./",
